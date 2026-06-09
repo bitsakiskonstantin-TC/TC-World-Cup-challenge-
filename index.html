@@ -4,33 +4,37 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Företagets VM-Utmaning 2026</title>
-    <!-- Tailwind CSS för snygg design -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <style>
         .tab-content { display: none; }
         .tab-content.active { display: block; }
+        @keyframes pulse-gold {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.03); box-shadow: 0 0 20px rgba(245, 158, 11, 0.6); }
+        }
+        .pulse-btn { animation: pulse-gold 2s infinite; }
     </style>
 </head>
 <body class="bg-gray-900 text-gray-100 font-sans min-h-screen">
 
     <div class="max-w-4xl mx-auto p-4 sm:p-6 lg:p-8">
         
-        <!-- Header -->
         <header class="text-center mb-8 border-b border-gray-800 pb-6">
-            <h1 class="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r fancy-gradient from-yellow-400 to-amber-500 mb-2">
+            <div class="flex justify-center mb-4">
+                <img src="image.png" alt="VM Solen" class="h-36 w-36 object-cover rounded-full shadow-2xl border-4 border-amber-500 bg-gray-800">
+            </div>
+            <h1 class="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-amber-500 mb-2">
                 🏆 VM-TÄVLINGEN 2026
             </h1>
             <p class="text-gray-400">15 Kollegor. 15 Topplag. Må bäste ambassadör vinna!</p>
         </header>
 
-        <!-- Navigering -->
         <nav class="flex space-x-2 bg-gray-800 p-1.5 rounded-xl mb-8">
             <button onclick="switchTab('leaderboard-tab')" id="btn-leaderboard-tab" class="tab-btn flex-1 py-2 px-4 rounded-lg text-sm font-medium transition bg-amber-500 text-gray-950 font-bold">📊 Leaderboard</button>
             <button onclick="switchTab('admin-tab')" id="btn-admin-tab" class="tab-btn flex-1 py-2 px-4 rounded-lg text-sm font-medium text-gray-400 hover:text-white transition">⚙️ Registrera Poäng</button>
             <button onclick="switchTab('setup-tab')" id="btn-setup-tab" class="tab-btn flex-1 py-2 px-4 rounded-lg text-sm font-medium text-gray-400 hover:text-white transition">🎲 Lottning</button>
         </nav>
 
-        <!-- ================= TAB: LEADERBOARD ================= -->
         <div id="leaderboard-tab" class="tab-content active space-y-6">
             <div class="bg-gray-800 rounded-xl p-6 shadow-xl border border-gray-700 overflow-hidden">
                 <h2 class="text-xl font-bold mb-4 flex items-center gap-2">🏆 Aktuell Ställning</h2>
@@ -47,32 +51,27 @@
                             </tr>
                         </thead>
                         <tbody id="leaderboard-body">
-                            <!-- Fylls i med JS -->
-                        </tbody>
+                            </tbody>
                     </table>
                 </div>
                 <div id="no-data-msg" class="text-center py-8 text-gray-500 hidden">
-                    Ingen lottning har gjorts än. Gå till fliken "Lottning" för att starta tävlingen!
+                    Ingen lottning har slutförts än. Gå till fliken "Lottning" för att starta showen!
                 </div>
             </div>
         </div>
 
-        <!-- ================= TAB: ADMIN ================= -->
         <div id="admin-tab" class="tab-content space-y-6">
             <div class="bg-gray-800 rounded-xl p-6 shadow-xl border border-gray-700">
                 <h2 class="text-xl font-bold mb-4 text-amber-400">⚙️ Uppdatera Match- och Ambassadörsdata</h2>
                 <p class="text-sm text-gray-400 mb-6">Välj ett lag i listan för att justera dess statistik. Poängen räknas ut automatiskt live på leaderboarden.</p>
                 
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <!-- Välj lag -->
                     <div class="md:col-span-1">
-                        <label class="block text-xs font-semibold uppercase text-gray-400 mb-2">Välj lag att uppdatera</label>
+                        <label class="block text-xs font-semibold uppercase text-gray-400 mb-2">Välj lag</label>
                         <select id="admin-team-select" onchange="loadTeamDataToAdmin()" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2.5 text-white focus:ring-2 focus:ring-amber-500 focus:outline-none">
-                            <!-- Fylls med JS -->
-                        </select>
+                            </select>
                     </div>
                     
-                    <!-- Formformulär -->
                     <div class="md:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-4 bg-gray-900/50 p-4 rounded-xl border border-gray-800">
                         <div>
                             <label class="block text-xs font-medium text-gray-400 mb-1">Antal gjorda mål (+1p/st)</label>
@@ -83,7 +82,7 @@
                             <input type="number" id="inp-cleansheets" min="0" class="w-full bg-gray-800 border border-gray-700 rounded-lg p-2 text-white">
                         </div>
                         <div>
-                            <label class="block text-xs font-medium text-gray-400 mb-1">Oavgjorda matcher i gruppspel (+1p/st)</label>
+                            <label class="block text-xs font-medium text-gray-400 mb-1">Oavgjorda i gruppspel (+1p/st)</label>
                             <input type="number" id="inp-draws" min="0" class="w-full bg-gray-800 border border-gray-700 rounded-lg p-2 text-white">
                         </div>
                         <div>
@@ -124,11 +123,8 @@
                 </div>
             </div>
 
-            <!-- Backup & Återställning -->
             <div class="bg-gray-800 rounded-xl p-4 border border-gray-700 flex flex-wrap justify-between items-center gap-4 text-xs text-gray-400">
-                <div>
-                    <span class="font-semibold text-gray-300">Datahantering:</span> Spara ner en backup-fil på datorn ifall du byter enhet eller rensar cache.
-                </div>
+                <div><span class="font-semibold text-gray-300">Datahantering:</span> Spara en backup om du rensar cache.</div>
                 <div class="flex gap-2">
                     <button onclick="exportData()" class="bg-gray-700 hover:bg-gray-600 text-white py-1.5 px-3 rounded">📥 Exportera data</button>
                     <button onclick="document.getElementById('import-file').click()" class="bg-gray-700 hover:bg-gray-600 text-white py-1.5 px-3 rounded">📤 Importera data</button>
@@ -137,31 +133,46 @@
             </div>
         </div>
 
-        <!-- ================= TAB: SETUP / LOTTNING ================= -->
         <div id="setup-tab" class="tab-content space-y-6">
-            <div class="bg-gray-800 rounded-xl p-6 shadow-xl border border-gray-700">
-                <h2 class="text-xl font-bold mb-2">🎲 Skapa lottning</h2>
-                <p class="text-sm text-gray-400 mb-6">Skriv in namnen på de 15 anställda (ett namn per rad). Appen kommer automatiskt att slumpa ut de 15 högst seedade länderna till dem.</p>
+            <div class="bg-gray-800 rounded-xl p-6 shadow-xl border border-gray-700 text-center">
+                <h2 class="text-2xl font-bold mb-2 text-amber-400">🎲 Live-lottning för kontoret</h2>
+                <p class="text-sm text-gray-400 mb-6">Samla gänget! Här lottar vi ut ett lag i taget för maximal spänning.</p>
                 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                        <label class="block text-xs font-semibold uppercase text-gray-400 mb-2">Anställda (Exakt 15 rader)</label>
-                        <textarea id="employee-names-input" rows="15" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-3 font-mono text-sm text-white focus:ring-2 focus:ring-amber-500 focus:outline-none" placeholder="Kalle&#10;Anna&#10;Filip..."></textarea>
-                        <div id="setup-error" class="text-red-400 text-xs mt-1 font-semibold hidden">Du måste ange exakt 15 namn (ett per rad).</div>
+                <div id="setup-start-screen" class="space-y-4">
+                    <div class="bg-gray-900 p-4 rounded-xl border border-gray-800 max-w-md mx-auto text-left">
+                        <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 text-center">Registrerade deltagare (15 st)</h3>
+                        <div id="names-preview-list" class="grid grid-cols-3 gap-2 text-xs text-gray-300 font-mono text-center">
+                            </div>
                     </div>
-                    
-                    <div class="space-y-4">
-                        <div class="bg-gray-900 p-4 rounded-xl border border-gray-800">
-                            <h3 class="text-sm font-bold text-amber-400 uppercase tracking-wider mb-2">De 15 inkluderade topplagen:</h3>
-                            <ul id="teams-list-display" class="grid grid-cols-2 gap-1 text-xs text-gray-300 font-mono">
-                                <!-- Fylls med JS -->
-                            </ul>
+                    <button onclick="prepareLiveDraw()" class="bg-amber-500 hover:bg-amber-400 text-gray-950 font-extrabold py-3 px-8 rounded-lg transition shadow-lg uppercase tracking-wider text-sm">
+                        Kör igång lottningen!
+                    </button>
+                </div>
+
+                <div id="setup-draw-screen" class="hidden space-y-6 py-4">
+                    <div class="text-sm font-semibold text-gray-400">
+                        Kvar att lotta: <span id="draw-counter" class="text-amber-400 text-lg font-mono">15</span> / 15
+                    </div>
+
+                    <div id="latest-draw-box" class="bg-gray-900 border-2 border-dashed border-gray-700 p-8 rounded-2xl max-w-lg mx-auto min-h-[140px] flex flex-col justify-center items-center transition-all duration-300">
+                        <div id="latest-draw-placeholder" class="text-gray-500 italic">Klicka på knappen nedan för att dra...</div>
+                        <div id="latest-draw-content" class="hidden">
+                            <div id="latest-draw-name" class="text-3xl font-extrabold text-white mb-2">Namn</div>
+                            <div class="text-xs text-gray-400 uppercase tracking-widest">har tilldelats</div>
+                            <div id="latest-draw-team" class="text-4xl font-black text-amber-400 mt-2 tracking-wide">LAND</div>
                         </div>
-                        
-                        <button onclick="executeDraw()" class="w-full bg-amber-500 hover:bg-amber-400 text-gray-950 font-extrabold py-4 px-4 rounded-lg transition shadow-lg text-center tracking-wide uppercase">
-                            🔀 Genomför Slumpmässig Lottning
+                    </div>
+
+                    <div>
+                        <button id="draw-next-btn" onclick="drawNextStep()" class="pulse-btn bg-gradient-to-r from-amber-500 to-yellow-400 text-gray-950 font-black py-4 px-10 rounded-xl shadow-2xl uppercase tracking-widest text-lg transition transform active:scale-95">
+                            Dra nästa par! 🔀
                         </button>
-                        <p class="text-[11px] text-red-400 text-center font-medium">⚠️ OBS: Om du kör en ny lottning nollställs alla eventuella sparade poäng!</p>
+                    </div>
+
+                    <div class="max-w-md mx-auto text-left bg-gray-900/60 p-4 rounded-xl border border-gray-800">
+                        <h4 class="text-xs font-bold text-gray-400 uppercase mb-3 tracking-wider text-center">Dragna par hittills:</h4>
+                        <ul id="drawn-history-list" class="space-y-1.5 text-xs font-mono max-h-48 overflow-y-auto pr-2">
+                            </ul>
                     </div>
                 </div>
             </div>
@@ -169,7 +180,6 @@
 
     </div>
 
-    <!-- ================= DETALJ-MODAL ================= -->
     <div id="details-modal" class="fixed inset-0 bg-black/70 flex items-center justify-center p-4 hidden z-50">
         <div class="bg-gray-800 rounded-2xl max-w-md w-full p-6 border border-gray-700 shadow-2xl relative">
             <button onclick="closeModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white text-xl font-bold">&times;</button>
@@ -177,86 +187,58 @@
             <p id="modal-subtitle" class="text-sm text-gray-400 mb-6">Land</p>
             
             <div class="space-y-3 text-sm">
-                <div class="flex justify-between border-b border-gray-700 pb-1.5">
-                    <span class="text-gray-400">Gjorda mål (+1p):</span>
-                    <span id="mod-goals" class="font-mono font-bold">0</span>
-                </div>
-                <div class="flex justify-between border-b border-gray-700 pb-1.5">
-                    <span class="text-gray-400">Hållna nollor (90 min) (+2p):</span>
-                    <span id="mod-cleansheets" class="font-mono font-bold">0</span>
-                </div>
-                <div class="flex justify-between border-b border-gray-700 pb-1.5">
-                    <span class="text-gray-400">Oavgjorda (Grupp) (+1p):</span>
-                    <span id="mod-draws" class="font-mono font-bold">0</span>
-                </div>
-                <div class="flex justify-between border-b border-gray-700 pb-1.5">
-                    <span class="text-gray-400">Vinster Gruppspel (+3p):</span>
-                    <span id="mod-w-group" class="font-mono font-bold">0</span>
-                </div>
-                <div class="flex justify-between border-b border-gray-700 pb-1.5">
-                    <span class="text-gray-400">Vinst Sextondel (+4p):</span>
-                    <span id="mod-w-r16" class="font-mono font-bold">0</span>
-                </div>
-                <div class="flex justify-between border-b border-gray-700 pb-1.5">
-                    <span class="text-gray-400">Vinst Åttondel (+5p):</span>
-                    <span id="mod-w-r8" class="font-mono font-bold">0</span>
-                </div>
-                <div class="flex justify-between border-b border-gray-700 pb-1.5">
-                    <span class="text-gray-400">Vinst Kvartsfinal (+6p):</span>
-                    <span id="mod-w-qf" class="font-mono font-bold">0</span>
-                </div>
-                <div class="flex justify-between border-b border-gray-700 pb-1.5">
-                    <span class="text-gray-400">Vinst Semifinal (+10p):</span>
-                    <span id="mod-w-sf" class="font-mono font-bold">0</span>
-                </div>
-                <div class="flex justify-between border-b border-gray-700 pb-1.5">
-                    <span class="text-gray-400">Vinst Final / VM-Guld (+15p):</span>
-                    <span id="mod-w-f" class="font-mono font-bold">0</span>
-                </div>
-                <div class="flex justify-between text-purple-300 font-bold bg-purple-950/40 p-2 rounded border border-purple-900/50">
-                    <span>🎭 Ambassadörsbonus:</span>
-                    <span id="mod-ambassador" class="font-mono">0p</span>
-                </div>
+                <div class="flex justify-between border-b border-gray-700 pb-1.5"><span class="text-gray-400">Gjorda mål (+1p):</span><span id="mod-goals" class="font-mono font-bold">0</span></div>
+                <div class="flex justify-between border-b border-gray-700 pb-1.5"><span class="text-gray-400">Hållna nollor (90 min) (+2p):</span><span id="mod-cleansheets" class="font-mono font-bold">0</span></div>
+                <div class="flex justify-between border-b border-gray-700 pb-1.5"><span class="text-gray-400">Oavgjorda (Grupp) (+1p):</span><span id="mod-draws" class="font-mono font-bold">0</span></div>
+                <div class="flex justify-between border-b border-gray-700 pb-1.5"><span class="text-gray-400">Vinster Gruppspel (+3p):</span><span id="mod-w-group" class="font-mono font-bold">0</span></div>
+                <div class="flex justify-between border-b border-gray-700 pb-1.5"><span class="text-gray-400">Vinst Sextondel (+4p):</span><span id="mod-w-r16" class="font-mono font-bold">0</span></div>
+                <div class="flex justify-between border-b border-gray-700 pb-1.5"><span class="text-gray-400">Vinst Åttondel (+5p):</span><span id="mod-w-r8" class="font-mono font-bold">0</span></div>
+                <div class="flex justify-between border-b border-gray-700 pb-1.5"><span class="text-gray-400">Vinst Kvartsfinal (+6p):</span><span id="mod-w-qf" class="font-mono font-bold">0</span></div>
+                <div class="flex justify-between border-b border-gray-700 pb-1.5"><span class="text-gray-400">Vinst Semifinal (+10p):</span><span id="mod-w-sf" class="font-mono font-bold">0</span></div>
+                <div class="flex justify-between border-b border-gray-700 pb-1.5"><span class="text-gray-400">Vinst Final / VM-Guld (+15p):</span><span id="mod-w-f" class="font-mono font-bold">0</span></div>
+                <div class="flex justify-between text-purple-300 font-bold bg-purple-950/40 p-2 rounded border border-purple-900/50"><span>🎭 Ambassadörsbonus:</span><span id="mod-ambassador" class="font-mono">0p</span></div>
             </div>
         </div>
     </div>
 
-    <!-- ================= JAVASCRIPT LOGIK ================= -->
     <script>
-        // De 15 högsta länderna inför VM (baserat på typisk seedning/rankning)
         const DEFAULT_TEAMS = [
             "Argentina", "Frankrike", "Spanien", "England", "Brasilien", 
             "Belgien", "Nederländerna", "Portugal", "Italien", "Kroatien", 
             "Tyskland", "Marocko", "Uruguay", "USA", "Colombia"
         ];
 
-        // Default-namn för att demonstrera fältet
-        const DEFAULT_NAMES = "Johan\nSarah\nErik\nMalin\nMikael\nLinda\nAndreas\nEmma\nPeter\nSofia\nMattias\nKarin\nJonas\nMarie\nDaniel";
+        // Dina 15 anställda förinlagda
+        const FIXED_NAMES = [
+            "Lisa", "Linnea", "Adam", "Sofie", "Fredrik", 
+            "Tyra", "Öberg", "Selander", "Camilla", "Jimmy", 
+            "Nico", "Konstantin", "Karl Oskar", "David", "Frida"
+        ];
 
-        // Global app-state
         let appState = {
             hasDrawn: false,
-            assignments: [], // { name: "", team: "" }
-            stats: {}        // teamName: { goals: 0, cleansheets: 0, draws: 0, w_group: 0, w_r16: 0, w_r8: 0, w_qf: 0, w_sf: 0, w_f: 0, ambassador: 0 }
+            assignments: [], 
+            stats: {}        
         };
 
-        // Ladda data vid start
+        // Intern temporär lista för live-lottningen
+        let livePool = [];
+        let liveIndex = 0;
+
         window.onload = function() {
-            const savedData = localStorage.getItem("vm_tavling_state");
+            const savedData = localStorage.getItem("vm_tavling_state_v2");
             if (savedData) {
                 appState = JSON.parse(savedData);
-            } else {
-                document.getElementById("employee-names-input").value = DEFAULT_NAMES;
             }
             
-            renderTeamsDisplay();
+            renderNamesPreview();
             rebuildLeaderboard();
             populateAdminDropdown();
             loadTeamDataToAdmin();
         };
 
         function saveToLocalStorage() {
-            localStorage.setItem("vm_tavling_state", JSON.stringify(appState));
+            localStorage.setItem("vm_tavling_state_v2", JSON.stringify(appState));
         }
 
         function switchTab(tabId) {
@@ -271,45 +253,131 @@
             document.getElementById('btn-' + tabId).classList.remove('text-gray-400');
         }
 
-        function renderTeamsDisplay() {
-            const list = document.getElementById("teams-list-display");
-            list.innerHTML = "";
-            DEFAULT_TEAMS.forEach((t, idx) => {
-                list.innerHTML += `<li>${idx+1}. ${t}</li>`;
+        function renderNamesPreview() {
+            const container = document.getElementById("names-preview-list");
+            container.innerHTML = "";
+            FIXED_NAMES.forEach(name => {
+                container.innerHTML += `<div class="bg-gray-800 p-2 rounded border border-gray-700">${name}</div>`;
             });
         }
 
-        function executeDraw() {
-            const text = document.getElementById("employee-names-input").value;
-            const names = text.split('\n').map(n => n.trim()).filter(n => n.length > 0);
-            
-            if (names.length !== 15) {
-                document.getElementById("setup-error").classList.remove("hidden");
-                return;
+        // Steg 1: Initiera ordningen inför live-lottningen
+        function prepareLiveDraw() {
+            if (appState.hasDrawn) {
+                if (!confirm("Det finns redan en sparad lottning. Vill du starta om? All registrerad matchpoäng kommer nollställas!")) {
+                    return;
+                }
             }
-            document.getElementById("setup-error").classList.add("hidden");
 
-            // Shuffla länderna
+            // Shuffla namn
+            let shuffledNames = [...FIXED_NAMES];
+            for (let i = shuffledNames.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffledNames[i], shuffledNames[j]] = [shuffledNames[j], shuffledNames[i]];
+            }
+
+            // Shuffla länder
             let shuffledTeams = [...DEFAULT_TEAMS];
             for (let i = shuffledTeams.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
                 [shuffledTeams[i], shuffledTeams[j]] = [shuffledTeams[j], shuffledTeams[i]];
             }
 
-            // Sätt upp ny state
-            appState.assignments = names.map((name, idx) => ({ name: name, team: shuffledTeams[idx] }));
+            // Skapa den färdiga dolda matchningspoolen
+            livePool = shuffledNames.map((name, idx) => ({ name: name, team: shuffledTeams[idx] }));
+            liveIndex = 0;
+
+            // Rensa stat och gamla dragningar
+            appState.assignments = [];
+            appState.hasDrawn = false;
             appState.stats = {};
             DEFAULT_TEAMS.forEach(team => {
                 appState.stats[team] = { goals: 0, cleansheets: 0, draws: 0, w_group: 0, w_r16: 0, w_r8: 0, w_qf: 0, w_sf: 0, w_f: 0, ambassador: 0 };
             });
-            appState.hasDrawn = true;
 
-            saveToLocalStorage();
-            rebuildLeaderboard();
-            populateAdminDropdown();
-            loadTeamDataToAdmin();
-            switchTab('leaderboard-tab');
-            alert("Lottningen är klar! Lycka till!");
+            // Uppdatera UI till dragningsskärmen
+            document.getElementById("setup-start-screen").classList.add("hidden");
+            document.getElementById("setup-draw-screen").classList.remove("hidden");
+            document.getElementById("draw-counter").innerText = "15";
+            document.getElementById("latest-draw-placeholder").classList.remove("hidden");
+            document.getElementById("latest-draw-content").classList.add("hidden");
+            document.getElementById("drawn-history-list").innerHTML = "";
+            document.getElementById("draw-next-btn").innerText = "Dra nästa par! 🔀";
+            document.getElementById("draw-next-btn").disabled = false;
+        }
+
+        // Steg 2: Dra nästa (en i taget, eller två i finalen)
+        function drawNextStep() {
+            let remaining = livePool.length - liveIndex;
+
+            if (remaining > 2) {
+                // Dra EN person
+                let currentPair = livePool[liveIndex];
+                revealPair(currentPair);
+                appState.assignments.push(currentPair);
+                liveIndex++;
+                
+                document.getElementById("draw-counter").innerText = livePool.length - liveIndex;
+                
+                // Om det nu är exakt 2 kvar efter denna dragning, ändra texten på knappen för extra spänning!
+                if (livePool.length - liveIndex === 2) {
+                    document.getElementById("draw-next-btn").innerText = "🔥 Dra sista två lagen samtidigt! 🔥";
+                }
+            } 
+            else if (remaining === 2) {
+                // Den utlovade finalen: Dra DE SISTA TVÅ samtidigt!
+                let pair1 = livePool[liveIndex];
+                let pair2 = livePool[liveIndex + 1];
+
+                appState.assignments.push(pair1);
+                appState.assignments.push(pair2);
+                liveIndex += 2;
+
+                // Visa båda i rutan på ett snyggt sätt
+                document.getElementById("latest-draw-placeholder").classList.add("hidden");
+                const content = document.getElementById("latest-draw-content");
+                content.classList.remove("hidden");
+                
+                document.getElementById("latest-draw-name").innerHTML = `<span class="text-emerald-400">${pair1.name}</span> & <span class="text-cyan-400">${pair2.name}</span>`;
+                document.getElementById("latest-draw-team").innerHTML = `<span class="text-amber-400 text-2xl d-block">${pair1.team}</span><br><span class="text-amber-400 text-2xl d-block">${pair2.team}</span>`;
+                
+                // Lägg till båda i historiken
+                const history = document.getElementById("drawn-history-list");
+                history.innerHTML = `<li class="bg-amber-950/40 text-amber-300 p-1 rounded border border-amber-800 font-bold">💥 GRAND FINALE: ${pair1.name} → ${pair1.team} & ${pair2.name} → ${pair2.team}</li>` + history.innerHTML;
+
+                document.getElementById("draw-counter").innerText = "0";
+                
+                // Slutför lottningen helt
+                appState.hasDrawn = true;
+                saveToLocalStorage();
+                rebuildLeaderboard();
+                populateAdminDropdown();
+                loadTeamDataToAdmin();
+
+                // Gör om knappen till en länk till resultatet
+                const mainBtn = document.getElementById("draw-next-btn");
+                mainBtn.innerText = "🎉 Allt är lottat! Gå till Leaderboard";
+                mainBtn.onclick = function() {
+                    switchTab('leaderboard-tab');
+                    // Återställ startskärmen i fliken om man går tillbaka dit senare
+                    document.getElementById("setup-start-screen").classList.remove("hidden");
+                    document.getElementById("setup-draw-screen").classList.add("hidden");
+                    mainBtn.onclick = drawNextStep; // återställ klick-event
+                };
+            }
+        }
+
+        function revealPair(pair) {
+            document.getElementById("latest-draw-placeholder").classList.add("hidden");
+            const content = document.getElementById("latest-draw-content");
+            content.classList.remove("hidden");
+            
+            document.getElementById("latest-draw-name").innerText = pair.name;
+            document.getElementById("latest-draw-team").innerText = pair.team.toUpperCase();
+
+            // Lägg till i historik-listan (överst)
+            const history = document.getElementById("drawn-history-list");
+            history.innerHTML = `<li class="border-b border-gray-800 py-1 text-gray-300"><span class="font-bold text-white">${pair.name}</span> fick <span class="text-amber-400 font-bold">${pair.team}</span></li>` + history.innerHTML;
         }
 
         function calculatePoints(s) {
@@ -323,7 +391,7 @@
             pts += (s.w_qf || 0) * 6;
             pts += (s.w_sf || 0) * 10;
             pts += (s.w_f || 0) * 15;
-            pts += (s.ambassador || 0); // Redan spärrad vid max 5 i admin
+            pts += (s.ambassador || 0); 
             return pts;
         }
 
@@ -338,7 +406,6 @@
             }
             noData.classList.add("hidden");
 
-            // Beräkna totalpoäng för alla och sortera
             let leaderboardData = appState.assignments.map(a => {
                 const s = appState.stats[a.team] || { goals: 0, cleansheets: 0, draws: 0, w_group: 0, w_r16: 0, w_r8: 0, w_qf: 0, w_sf: 0, w_f: 0, ambassador: 0 };
                 return {
@@ -381,7 +448,6 @@
                 return;
             }
 
-            // Sortera listan alfabetiskt för administratören
             const sortedTeams = [...DEFAULT_TEAMS].sort();
             sortedTeams.forEach(team => {
                 const owner = appState.assignments.find(a => a.team === team);
@@ -412,7 +478,6 @@
             const team = document.getElementById("admin-team-select").value;
             if (!team || !appState.stats[team]) return;
 
-            // Tvinga tak på max 5p för ambassadör
             let ambVal = parseInt(document.getElementById("inp-ambassador").value) || 0;
             if (ambVal > 5) {
                 alert("Ambassadörspoäng kan vara högst 5. Sätter automatiskt värdet till 5.");
@@ -438,7 +503,6 @@
             alert(`Statistiken för ${team} har sparats!`);
         }
 
-        // Modal fönster för specifik detaljvy
         function openModal(name, team) {
             const s = appState.stats[team];
             document.getElementById("modal-title").innerText = name;
@@ -462,12 +526,11 @@
             document.getElementById("details-modal").classList.add("hidden");
         }
 
-        // Export/Import-funktioner för säkerhet
         function exportData() {
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appState));
             const downloadAnchor = document.createElement('a');
             downloadAnchor.setAttribute("href", dataStr);
-            downloadAnchor.setAttribute("download", "vm_tavling_backup_2026.json");
+            downloadAnchor.setAttribute("download", "vm_tavling_backup.json");
             document.body.appendChild(downloadAnchor);
             downloadAnchor.click();
             downloadAnchor.remove();
@@ -486,7 +549,7 @@
                         rebuildLeaderboard();
                         populateAdminDropdown();
                         loadTeamDataToAdmin();
-                        alert("Data har importerats utan problem!");
+                        alert("Data har importerats!");
                     } else {
                         alert("Felaktigt filformat.");
                     }
