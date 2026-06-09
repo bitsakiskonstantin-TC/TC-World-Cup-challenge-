@@ -11,6 +11,11 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
     <script>
+        // =========================================================================
+        // 🚀 RAD 2: KONTORETS LIVE-DATA (HÄR ERSÄTTER DU HELA RADEN MED DIN SYNK-KOD SENARE)
+        // =========================================================================
+        const LIVE_DATA = null;
+
         tailwind.config = {
             theme: {
                 extend: {
@@ -59,10 +64,10 @@
     <div class="max-w-5xl mx-auto px-4 mt-6">
         
         <nav class="flex flex-wrap gap-1.5 bg-tcBlue p-1.5 rounded-xl border border-slate-800/80 mb-6 shadow-lg">
-            <button onclick="switchTab('leaderboard-tab')" id="btn-leaderboard-tab" class="tab-btn flex-1 min-w-[100px] py-2.5 px-3 rounded-lg text-xs sm:text-sm font-semibold transition bg-tcGold text-tcBlue font-bold">📊 Leaderboard</button>
-            <button onclick="switchTab('admin-tab')" id="btn-admin-tab" class="tab-btn flex-1 min-w-[100px] py-2.5 px-3 rounded-lg text-xs sm:text-sm font-semibold text-slate-400 hover:text-white transition">⚙️ Registrera Poäng</button>
-            <button onclick="switchTab('setup-tab')" id="btn-setup-tab" class="tab-btn flex-1 min-w-[100px] py-2.5 px-3 rounded-lg text-xs sm:text-sm font-semibold text-slate-400 hover:text-white transition">🎲 Lottning</button>
-            <button onclick="switchTab('rules-tab')" id="btn-rules-tab" class="tab-btn flex-1 min-w-[100px] py-2.5 px-3 rounded-lg text-xs sm:text-sm font-semibold text-slate-400 hover:text-white transition">📜 Regler</button>
+            <button onclick="switchTab('leaderboard-tab')" id="btn-leaderboard-tab" class="tab-btn flex-1 min-w-[100px] py-2.5 px-3 rounded-lg text-xs sm:text-sm font-semibold transition bg-tcGold text-tcBlue font-bold"><i class="fa-solid fa-chart-simple mr-1.5"></i>Leaderboard</button>
+            <button onclick="switchTab('admin-tab')" id="btn-admin-tab" class="tab-btn flex-1 min-w-[100px] py-2.5 px-3 rounded-lg text-xs sm:text-sm font-semibold text-slate-400 hover:text-white transition"><i class="fa-solid fa-gear mr-1.5"></i>Registrera Poäng</button>
+            <button onclick="switchTab('setup-tab')" id="btn-setup-tab" class="tab-btn flex-1 min-w-[100px] py-2.5 px-3 rounded-lg text-xs sm:text-sm font-semibold text-slate-400 hover:text-white transition"><i class="fa-solid fa-dice mr-1.5"></i>Lottning</button>
+            <button onclick="switchTab('rules-tab')" id="btn-rules-tab" class="tab-btn flex-1 min-w-[100px] py-2.5 px-3 rounded-lg text-xs sm:text-sm font-semibold text-slate-400 hover:text-white transition"><i class="fa-solid fa-book mr-1.5"></i>Regler</button>
         </nav>
 
         <div id="leaderboard-tab" class="tab-content active space-y-6">
@@ -94,8 +99,8 @@
             
             <div class="bg-tcBlue rounded-xl p-5 shadow-xl border border-slate-800/60 border-l-4 border-l-amber-500">
                 <h3 class="text-sm font-poppins font-bold text-white flex items-center gap-2"><i class="fa-solid fa-image text-tcGold"></i> ☀️ Steg 1: Ladda upp tävlingens logotyp</h3>
-                <p class="text-xs text-slate-400 mt-0.5 mb-3">Välj din sol-bild från din dator eller mobil så bakas den in i appen direkt.</p>
-                <input type="file" id="logo-uploader" accept="image/*" onchange="uploadLogoViaApp(event)" class="text-xs text-slate-400 file:mr-4 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-slate-850 file:text-tcGold hover:file:bg-slate-700 cursor-pointer">
+                <p class="text-xs text-slate-400 mt-0.5 mb-3">Välj din sol-bild direkt från din dator eller mobil så sparas den i appen.</p>
+                <input type="file" id="logo-uploader" accept="image/*" onchange="uploadLogoViaApp(event)" class="text-xs text-slate-400 file:mr-4 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-slate-800 file:text-tcGold hover:file:bg-slate-700 cursor-pointer">
             </div>
 
             <div class="bg-tcBlue rounded-xl p-5 shadow-xl border border-slate-800/60">
@@ -163,7 +168,7 @@
             <div class="bg-tcBlue rounded-xl p-5 shadow-xl border border-slate-800/60 border-l-4 border-l-tcGold">
                 <h3 class="text-base font-poppins font-bold text-white flex items-center gap-2"><i class="fa-solid fa-cloud-arrow-up text-tcGold"></i> Steg 3: Publicera live till kontoret</h3>
                 <p class="text-xs text-slate-400 mt-1 mb-4">
-                    Klicka här för att generera koden som uppdaterar hemsidan (och bilden!) för alla kollegor samtidigt.
+                    Klicka här för att generera koden som uppdaterar hemsidan (och bilden!) för hela kontoret.
                 </p>
                 <div class="space-y-3">
                     <button onclick="generateSyncCode()" class="bg-tcGold hover:bg-amber-400 text-tcBlue font-bold py-2 px-4 rounded text-xs uppercase tracking-wider transition">
@@ -262,7 +267,7 @@
                     <div class="bg-purple-950/10 p-4 rounded-xl border border-purple-900/30 space-y-2.5">
                         <h3 class="text-sm font-bold text-purple-300 flex items-center gap-1.5"><i class="fa-solid fa-mask-face"></i> 5p Ambassadörsbonus</h3>
                         <p class="text-xs text-purple-200/80 leading-relaxed">
-                            För att maxa stämningen delas bonuspoäng ut för genuint engagemang. **Max 5 poäng totalt** kan samlas in per person under hela turneringen.
+                            För å maxa stämningen delas bonuspoäng ut för genuint engagemang. **Max 5 poäng totalt** kan samlas in per person under hela turneringen.
                         </p>
                         <div class="text-[11px] text-purple-300 space-y-1 bg-slate-900/60 p-3 rounded border border-purple-900/20">
                             <span class="font-bold block mb-1 text-white">Godkända exempel:</span>
@@ -299,12 +304,6 @@
     </div>
 
     <script>
-        // =========================================================================
-        // 🚀 KONTORETS LIVE-DATA (HÄR KLISTRAR DU IN DIN SYNK-KOD SENARE)
-        // =========================================================================
-        const LIVE_DATA = null; 
-
-
         const DEFAULT_TEAMS = [
             "Argentina", "Frankrike", "Spanien", "England", "Brasilien", 
             "Belgien", "Nederländerna", "Portugal", "Italien", "Kroatien", 
@@ -321,7 +320,7 @@
             hasDrawn: false,
             assignments: [], 
             stats: {},
-            logo: "" // Sparar din Base64-bild i datan istället för HTML koden!       
+            logo: ""       
         };
 
         let livePool = [];
@@ -344,17 +343,16 @@
             loadTeamDataToAdmin();
         };
 
-        // Sköter uppladdning direkt i appen via FileReader
         function uploadLogoViaApp(event) {
             const file = event.target.files[0];
             if (!file) return;
             
             const reader = new FileReader();
             reader.onload = function(e) {
-                appState.logo = e.target.result; // Sparar Base64-strängen i vårt state
+                appState.logo = e.target.result;
                 saveToLocalStorage();
                 renderLogo();
-                alert("Solen laddades upp framgångsrikt! Glöm inte att generera en ny synk-kod när du vill skicka ut den till kollegorna.");
+                alert("Solen sparad! Den skickas med automatiskt när du genererar synk-kod nästa gång.");
             };
             reader.readAsDataURL(file);
         }
@@ -388,7 +386,7 @@
             const textarea = document.getElementById("sync-code-output");
             textarea.select();
             document.execCommand("copy");
-            alert("Koden är kopierad! Öppna index.html på GitHub, välj Edit, markera raden 'const LIVE_DATA = null;' och klistra in koden över den.");
+            alert("Koden kopierad! Öppna index.html på GitHub, klicka på Edit, välj hela rad 15 ('const LIVE_DATA = null;') och klistra in.");
         }
 
         function switchTab(tabId) {
@@ -436,7 +434,6 @@
             appState.assignments = [];
             appState.hasDrawn = false;
             
-            // Behold logo if already exists during a redrawing
             const currentLogo = appState.logo;
             appState.stats = {};
             appState.logo = currentLogo;
@@ -557,3 +554,133 @@
             pts += (s.w_f || 0) * 15;
             pts += (s.ambassador || 0); 
             return pts;
+        }
+
+        function rebuildLeaderboard() {
+            const tbody = document.getElementById("leaderboard-body");
+            const noData = document.getElementById("no-data-msg");
+            tbody.innerHTML = "";
+
+            if (!appState.hasDrawn || appState.assignments.length === 0) {
+                noData.classList.remove("hidden");
+                return;
+            }
+            noData.classList.add("hidden");
+
+            let leaderboardData = appState.assignments.map(a => {
+                const s = appState.stats[a.team] || { goals: 0, cleansheets: 0, draws: 0, w_group: 0, w_r16: 0, w_r8: 0, w_qf: 0, w_sf: 0, w_f: 0, ambassador: 0 };
+                return {
+                    name: a.name,
+                    team: a.team,
+                    ambassador: s.ambassador || 0,
+                    totalPoints: calculatePoints(s)
+                };
+            });
+
+            leaderboardData.sort((a, b) => b.totalPoints - a.totalPoints || b.ambassador - a.ambassador);
+
+            leaderboardData.forEach((row, index) => {
+                let medal = index + 1;
+                if (index === 0) medal = "🥇";
+                else if (index === 1) medal = "🥈";
+                else if (index === 2) medal = "🥉";
+
+                tbody.innerHTML += `
+                    <tr class="border-b border-slate-800/40 hover:bg-slate-800/30 transition">
+                        <td class="py-3 px-3 text-center font-bold text-slate-400">${medal}</td>
+                        <td class="py-3 px-3 font-semibold text-white">${row.name}</td>
+                        <td class="py-3 px-3 text-slate-300 font-mono text-xs">${row.team}</td>
+                        <td class="py-3 px-3 text-center bg-purple-950/10 text-purple-300 font-bold border-x border-slate-800/20">${row.ambassador}p</td>
+                        <td class="py-3 px-3 text-center text-tcGold font-extrabold text-base">${row.totalPoints}p</td>
+                        <td class="py-3 px-3 text-center">
+                            <button onclick="openModal('${row.name}', '${row.team}')" class="text-[11px] bg-slate-800 hover:bg-slate-700 text-slate-200 py-1 px-2 rounded transition">Visa</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function populateAdminDropdown() {
+            const select = document.getElementById("admin-team-select");
+            select.innerHTML = "";
+            
+            if (!appState.hasDrawn) {
+                select.innerHTML = "<option>Ingen lottning aktiv</option>";
+                return;
+            }
+
+            const sortedTeams = [...DEFAULT_TEAMS].sort();
+            sortedTeams.forEach(team => {
+                const owner = appState.assignments.find(a => a.team === team);
+                const ownerText = owner ? `(${owner.name})` : '';
+                select.innerHTML += `<option value="${team}">${team} ${ownerText}</option>`;
+            });
+        }
+
+        function loadTeamDataToAdmin() {
+            if (!appState.hasDrawn) return;
+            const team = document.getElementById("admin-team-select").value;
+            const s = appState.stats[team];
+            if (!s) return;
+
+            document.getElementById("inp-goals").value = s.goals || 0;
+            document.getElementById("inp-cleansheets").value = s.cleansheets || 0;
+            document.getElementById("inp-draws").value = s.draws || 0;
+            document.getElementById("inp-w-group").value = s.w_group || 0;
+            document.getElementById("inp-w-r16").value = s.w_r16 || 0;
+            document.getElementById("inp-w-r8").value = s.w_r8 || 0;
+            document.getElementById("inp-w-qf").value = s.w_qf || 0;
+            document.getElementById("inp-w-sf").value = s.w_sf || 0;
+            document.getElementById("inp-w-f").value = s.w_f || 0;
+            document.getElementById("inp-ambassador").value = s.ambassador || 0;
+        }
+
+        function saveTeamData() {
+            const team = document.getElementById("admin-team-select").value;
+            if (!team || !appState.stats[team]) return;
+
+            let ambVal = parseInt(document.getElementById("inp-ambassador").value) || 0;
+
+            appState.stats[team] = {
+                goals: Math.max(0, parseInt(document.getElementById("inp-goals").value) || 0),
+                cleansheets: Math.max(0, parseInt(document.getElementById("inp-cleansheets").value) || 0),
+                draws: Math.max(0, parseInt(document.getElementById("inp-draws").value) || 0),
+                w_group: Math.max(0, parseInt(document.getElementById("inp-w-group").value) || 0),
+                w_r16: Math.max(0, Math.min(1, parseInt(document.getElementById("inp-w-r16").value) || 0)),
+                w_r8: Math.max(0, Math.min(1, parseInt(document.getElementById("inp-w-r8").value) || 0)),
+                w_qf: Math.max(0, Math.min(1, parseInt(document.getElementById("inp-w-qf").value) || 0)),
+                w_sf: Math.max(0, Math.min(1, parseInt(document.getElementById("inp-w-sf").value) || 0)),
+                w_f: Math.max(0, Math.min(1, parseInt(document.getElementById("inp-w-f").value) || 0)),
+                ambassador: Math.max(0, Math.min(5, ambVal))
+            };
+
+            saveToLocalStorage();
+            rebuildLeaderboard();
+            alert(`Sparat lokalt för ${team}! Glöm inte att generera din synk-kod.`);
+        }
+
+        function openModal(name, team) {
+            const s = appState.stats[team];
+            document.getElementById("modal-title").innerText = name;
+            document.getElementById("modal-subtitle").innerText = `Ambassadör för ${team}`;
+            
+            document.getElementById("mod-goals").innerText = `${s.goals} (${s.goals * 1}p)`;
+            document.getElementById("mod-cleansheets").innerText = `${s.cleansheets} (${s.cleansheets * 2}p)`;
+            document.getElementById("mod-draws").innerText = `${s.draws} (${s.draws * 1}p)`;
+            document.getElementById("mod-w-group").innerText = `${s.w_group} (${s.w_group * 3}p)`;
+            document.getElementById("mod-w-r16").innerText = `${s.w_r16} (${s.w_r16 * 4}p)`;
+            document.getElementById("mod-w-r8").innerText = `${s.w_r8} (${s.w_r8 * 5}p)`;
+            document.getElementById("mod-w-qf").innerText = `${s.w_qf} (${s.w_qf * 6}p)`;
+            document.getElementById("mod-w-sf").innerText = `${s.w_sf} (${s.w_sf * 10}p)`;
+            document.getElementById("mod-w-f").innerText = `${s.w_f} (${s.w_f * 15}p)`;
+            document.getElementById("mod-ambassador").innerText = `${s.ambassador}p / 5p`;
+
+            document.getElementById("details-modal").classList.remove("hidden");
+        }
+
+        function closeModal() {
+            document.getElementById("details-modal").classList.add("hidden");
+        }
+    </script>
+</body>
+</html>
