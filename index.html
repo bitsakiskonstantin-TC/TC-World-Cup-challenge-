@@ -331,3 +331,312 @@
         function generateSyncCode() {
             const container = document.getElementById("sync-container");
             const textarea = document.getElementById("sync-code-output");
+            
+            const cleanCode = `const LIVE_DATA = ${JSON.stringify(appState, null, 2)};`;
+            textarea.value = cleanCode;
+            container.classList.remove("hidden");
+        }
+
+        function copySyncCode() {
+            const textarea = document.getElementById("sync-code-output");
+            textarea.select();
+            document.execCommand("copy");
+            alert("Koden är kopierad! Gå nu till GitHub, öppna index.html, välj Edit, markera rad 165 ('const LIVE_DATA = null;') och klistra in detta över den.");
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => {
+                el.classList.remove('bg-tc-gold', 'text-[#0a1428]', 'font-bold');
+                el.classList.add('text-slate-400');
+            });
+
+            document.getElementById(tabId).classList.add('active');
+            document.getElementById('btn-' + tabId).classList.add('bg-tc-gold', 'text-[#0a1428]', 'font-bold');
+            document.getElementById('btn-' + tabId).classList.remove('text-slate-400');
+        }
+
+        function renderNamesPreview() {
+            const container = document.getElementById("names-preview-list");
+            container.innerHTML = "";
+            FIXED_NAMES.sort().forEach(name => {
+                container.innerHTML += `<div class="bg-slate-900 px-2 py-1.5 rounded border border-slate-800 text-slate-300">${name}</div>`;
+            });
+        }
+
+        function prepareLiveDraw() {
+            if (appState.hasDrawn) {
+                if (!confirm("Det finns redan en sparad dragning. Vill du nollställa och köra om en helt ny lottning?")) {
+                    return;
+                }
+            }
+
+            let shuffledNames = [...FIXED_NAMES];
+            for (let i = shuffledNames.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffledNames[i], shuffledNames[j]] = [shuffledNames[j], shuffledNames[i]];
+            }
+
+            let shuffledTeams = [...DEFAULT_TEAMS];
+            for (let i = shuffledTeams.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffledTeams[i], shuffledTeams[j]] = [shuffledTeams[j], shuffledTeams[i]];
+            }
+
+            livePool = shuffledNames.map((name, idx) => ({ name: name, team: shuffledTeams[idx] }));
+            liveIndex = 0;
+
+            appState.assignments = [];
+            appState.hasDrawn = false;
+            appState.stats = {};
+            DEFAULT_TEAMS.forEach(team => {
+                appState.stats[team] = { goals: 0, cleansheets: 0, draws: 0, w_group: 0, w_r16: 0, w_r8: 0, w_qf: 0, w_sf: 0, w_f: 0, ambassador: 0 };
+            });
+
+            document.getElementById("setup-start-screen").classList.add("hidden");
+            document.getElementById("setup-draw-screen").classList.remove("hidden");
+            document.getElementById("draw-counter").innerText = "15";
+            document.getElementById("latest-draw-placeholder").classList.remove("hidden");
+            document.getElementById("latest-draw-content").classList.add("hidden");
+            document.getElementById("drawn-history-list").innerHTML = "";
+            document.getElementById("draw-next-btn").innerText = "Dra nästa par! 🔀";
+            document.getElementById("draw-next-btn").disabled = false;
+            
+            updateRemainingTeamsDisplay();
+        }
+
+        function updateRemainingTeamsDisplay() {
+            const container = document.getElementById("remaining-teams-container");
+            container.innerHTML = "";
+            
+            let remaining = livePool.slice(liveIndex).map(p => p.team);
+            remaining.sort(); 
+            
+            if (remaining.length === 0) {
+                container.innerHTML = "<div class='text-slate-500 italic text-[11px] text-center py-2 col-span-full'>Tomt! Alla lag dragna.</div>";
+                return;
+            }
+            
+            remaining.forEach(team => {
+                container.innerHTML += `
+                    <div class="bg-[#0a1428]/80 px-2 py-1 rounded border border-slate-800 text-[11px] text-slate-300 font-mono">
+                        🏳️ ${team}
+                    </div>
+                `;
+            });
+        }
+
+        function drawNextStep() {
+            let remaining = livePool.length - liveIndex;
+
+            if (remaining > 2) {
+                let currentPair = livePool[liveIndex];
+                revealPair(currentPair);
+                appState.assignments.push(currentPair);
+                liveIndex++;
+                
+                document.getElementById("draw-counter").innerText = livePool.length - liveIndex;
+                updateRemainingTeamsDisplay();
+                
+                if (livePool.length - liveIndex === 2) {
+                    document.getElementById("draw-next-btn").innerText = "🔥 Dra sista två samtidigt! 🔥";
+                }
+            } 
+            else if (remaining === 2) {
+                let pair1 = livePool[liveIndex];
+                let pair2 = livePool[liveIndex + 1];
+
+                appState.assignments.push(pair1);
+                appState.assignments.push(pair2);
+                liveIndex += 2;
+
+                document.getElementById("latest-draw-placeholder").classList.add("hidden");
+                const content = document.getElementById("latest-draw-content");
+                content.classList.remove("hidden");
+                
+                document.getElementById("latest-draw-name").innerHTML = `<span class="text-emerald-400">${pair1.name}</span> & <span class="text-cyan-400">${pair2.name}</span>`;
+                document.getElementById("latest-draw-team").innerHTML = `<span class="text-tc-gold text-xl block">${pair1.team}</span><span class="text-tc-gold text-xl block mt-0.5">${pair2.team}</span>`;
+                
+                const history = document.getElementById("drawn-history-list");
+                history.innerHTML = `<li class="bg-amber-500/10 text-tc-gold p-2 rounded border border-amber-500/20 font-bold mb-1">💥 FINAL DRAGNING: ${pair1.name} (${pair1.team}) & ${pair2.name} (${pair2.team})</li>` + history.innerHTML;
+
+                document.getElementById("draw-counter").innerText = "0";
+                updateRemainingTeamsDisplay();
+                
+                appState.hasDrawn = true;
+                saveToLocalStorage();
+                rebuildLeaderboard();
+                populateAdminDropdown();
+                loadTeamDataToAdmin();
+
+                const mainBtn = document.getElementById("draw-next-btn");
+                mainBtn.innerText = "🎉 Lottat! Gå till Leaderboard & Glöm ej synka";
+                mainBtn.onclick = function() {
+                    switchTab('leaderboard-tab');
+                    document.getElementById("setup-start-screen").classList.remove("hidden");
+                    document.getElementById("setup-draw-screen").classList.add("hidden");
+                    mainBtn.onclick = drawNextStep; 
+                };
+            }
+        }
+
+        function revealPair(pair) {
+            document.getElementById("latest-draw-placeholder").classList.add("hidden");
+            const content = document.getElementById("latest-draw-content");
+            content.classList.remove("hidden");
+            
+            document.getElementById("latest-draw-name").innerText = pair.name;
+            document.getElementById("latest-draw-team").innerText = pair.team.toUpperCase();
+
+            const history = document.getElementById("drawn-history-list");
+            history.innerHTML = `<li class="py-1 text-slate-300 border-b border-slate-800/30"><span class="font-semibold text-white">${pair.name}</span> tilldelades <span class="text-tc-gold font-bold">${pair.team}</span></li>` + history.innerHTML;
+        }
+
+        function calculatePoints(s) {
+            let pts = 0;
+            pts += (s.goals || 0) * 1;
+            pts += (s.cleansheets || 0) * 2;
+            pts += (s.draws || 0) * 1;
+            pts += (s.w_group || 0) * 3;
+            pts += (s.w_r16 || 0) * 4;
+            pts += (s.w_r8 || 0) * 5;
+            pts += (s.w_qf || 0) * 6;
+            pts += (s.w_sf || 0) * 10;
+            pts += (s.w_f || 0) * 15;
+            pts += (s.ambassador || 0); 
+            return pts;
+        }
+
+        function rebuildLeaderboard() {
+            const tbody = document.getElementById("leaderboard-body");
+            const noData = document.getElementById("no-data-msg");
+            tbody.innerHTML = "";
+
+            if (!appState.hasDrawn || appState.assignments.length === 0) {
+                noData.classList.remove("hidden");
+                return;
+            }
+            noData.classList.add("hidden");
+
+            let leaderboardData = appState.assignments.map(a => {
+                const s = appState.stats[a.team] || { goals: 0, cleansheets: 0, draws: 0, w_group: 0, w_r16: 0, w_r8: 0, w_qf: 0, w_sf: 0, w_f: 0, ambassador: 0 };
+                return {
+                    name: a.name,
+                    team: a.team,
+                    ambassador: s.ambassador || 0,
+                    totalPoints: calculatePoints(s)
+                };
+            });
+
+            leaderboardData.sort((a, b) => b.totalPoints - a.totalPoints || b.ambassador - a.ambassador);
+
+            leaderboardData.forEach((row, index) => {
+                let medal = index + 1;
+                if (index === 0) medal = "🥇";
+                else if (index === 1) medal = "🥈";
+                else if (index === 2) medal = "🥉";
+
+                tbody.innerHTML += `
+                    <tr class="border-b border-slate-800/40 hover:bg-slate-800/30 transition">
+                        <td class="py-3 px-3 text-center font-bold text-slate-400">${medal}</td>
+                        <td class="py-3 px-3 font-semibold text-white">${row.name}</td>
+                        <td class="py-3 px-3 text-slate-300 font-mono text-xs">${row.team}</td>
+                        <td class="py-3 px-3 text-center bg-purple-950/10 text-purple-300 font-bold border-x border-slate-800/20">${row.ambassador}p</td>
+                        <td class="py-3 px-3 text-center text-tc-gold font-extrabold text-base">${row.totalPoints}p</td>
+                        <td class="py-3 px-3 text-center">
+                            <button onclick="openModal('${row.name}', '${row.team}')" class="text-[11px] bg-slate-800 hover:bg-slate-700 text-slate-200 py-1 px-2 rounded transition">Visa</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function populateAdminDropdown() {
+            const select = document.getElementById("admin-team-select");
+            select.innerHTML = "";
+            
+            if (!appState.hasDrawn) {
+                select.innerHTML = "<option>Ingen lottning aktiverad</option>";
+                return;
+            }
+
+            const sortedTeams = [...DEFAULT_TEAMS].sort();
+            sortedTeams.forEach(team => {
+                const owner = appState.assignments.find(a => a.team === team);
+                const ownerText = owner ? `(${owner.name})` : '';
+                select.innerHTML += `<option value="${team}">${team} ${ownerText}</option>`;
+            });
+        }
+
+        function loadTeamDataToAdmin() {
+            if (!appState.hasDrawn) return;
+            const team = document.getElementById("admin-team-select").value;
+            const s = appState.stats[team];
+            if (!s) return;
+
+            document.getElementById("inp-goals").value = s.goals || 0;
+            document.getElementById("inp-cleansheets").value = s.cleansheets || 0;
+            document.getElementById("inp-draws").value = s.draws || 0;
+            document.getElementById("inp-w-group").value = s.w_group || 0;
+            document.getElementById("inp-w-r16").value = s.w_r16 || 0;
+            document.getElementById("inp-w-r8").value = s.w_r8 || 0;
+            document.getElementById("inp-w-qf").value = s.w_qf || 0;
+            document.getElementById("inp-w-sf").value = s.w_sf || 0;
+            document.getElementById("inp-w-f").value = s.w_f || 0;
+            document.getElementById("inp-ambassador").value = s.ambassador || 0;
+        }
+
+        function saveTeamData() {
+            const team = document.getElementById("admin-team-select").value;
+            if (!team || !appState.stats[team]) return;
+
+            let ambVal = parseInt(document.getElementById("inp-ambassador").value) || 0;
+            if (ambVal > 5) {
+                alert("Ambassadörspoäng kan vara högst 5.");
+                ambVal = 5;
+                document.getElementById("inp-ambassador").value = 5;
+            }
+
+            appState.stats[team] = {
+                goals: Math.max(0, parseInt(document.getElementById("inp-goals").value) || 0),
+                cleansheets: Math.max(0, parseInt(document.getElementById("inp-cleansheets").value) || 0),
+                draws: Math.max(0, parseInt(document.getElementById("inp-draws").value) || 0),
+                w_group: Math.max(0, parseInt(document.getElementById("inp-w-group").value) || 0),
+                w_r16: Math.max(0, Math.min(1, parseInt(document.getElementById("inp-w-r16").value) || 0)),
+                w_r8: Math.max(0, Math.min(1, parseInt(document.getElementById("inp-w-r8").value) || 0)),
+                w_qf: Math.max(0, Math.min(1, parseInt(document.getElementById("inp-w-qf").value) || 0)),
+                w_sf: Math.max(0, Math.min(1, parseInt(document.getElementById("inp-w-sf").value) || 0)),
+                w_f: Math.max(0, Math.min(1, parseInt(document.getElementById("inp-w-f").value) || 0)),
+                ambassador: Math.max(0, Math.min(5, ambVal))
+            };
+
+            saveToLocalStorage();
+            rebuildLeaderboard();
+            alert(`Sparat lokalt för ${team}! Glöm inte att generera synk-kod nedan och lägga upp på GitHub så kollegorna ser det.`);
+        }
+
+        function openModal(name, team) {
+            const s = appState.stats[team];
+            document.getElementById("modal-title").innerText = name;
+            document.getElementById("modal-subtitle").innerText = `Ambassadör för ${team}`;
+            
+            document.getElementById("mod-goals").innerText = `${s.goals} (${s.goals * 1}p)`;
+            document.getElementById("mod-cleansheets").innerText = `${s.cleansheets} (${s.cleansheets * 2}p)`;
+            document.getElementById("mod-draws").innerText = `${s.draws} (${s.draws * 1}p)`;
+            document.getElementById("mod-w-group").innerText = `${s.w_group} (${s.w_group * 3}p)`;
+            document.getElementById("mod-w-r16").innerText = `${s.w_r16} (${s.w_r16 * 4}p)`;
+            document.getElementById("mod-w-r8").innerText = `${s.w_r8} (${s.w_r8 * 5}p)`;
+            document.getElementById("mod-w-qf").innerText = `${s.w_qf} (${s.w_qf * 6}p)`;
+            document.getElementById("mod-w-sf").innerText = `${s.w_sf} (${s.w_sf * 10}p)`;
+            document.getElementById("mod-w-f").innerText = `${s.w_f} (${s.w_f * 15}p)`;
+            document.getElementById("mod-ambassador").innerText = `${s.ambassador}p / 5p`;
+
+            document.getElementById("details-modal").classList.remove("hidden");
+        }
+
+        function closeModal() {
+            document.getElementById("details-modal").classList.add("hidden");
+        }
+    </script>
+</body>
+</html>
