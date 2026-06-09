@@ -332,7 +332,7 @@
         let liveIndex = 0;
 
         window.onload = function() {
-            if (LIVE_DATA && LIVE_DATA.hasDrawn) {
+            if (LIVE_DATA) {
                 appState = LIVE_DATA;
             } else {
                 const savedData = localStorage.getItem("vm_tavling_state_v4_tc");
