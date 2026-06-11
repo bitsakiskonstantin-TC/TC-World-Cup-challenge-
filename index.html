@@ -160,7 +160,11 @@
                             <label class="block text-xs font-bold text-purple-300 mb-1">🎭 Ambassadörsbonus (Max 5p)</label>
                             <input type="number" id="inp-ambassador" min="0" max="5" class="w-full bg-tcBlue border border-purple-800 rounded-md p-2 text-sm text-purple-200 font-bold focus:outline-none">
                         </div>
-                        
+                        <div class="bg-amber-500/10 p-2.5 rounded-lg border border-amber-500/20 sm:col-span-2 flex items-center gap-2">
+    <input type="checkbox" id="inp-mvp" class="w-4 h-4 rounded bg-slate-900 border-slate-800 text-tcGold focus:ring-tcGold cursor-pointer">
+    <label for="inp-mvp" class="text-xs font-bold text-amber-400 cursor-pointer">🏆 Utse till turneringens Bästa Ambassadör (+10p MVP-bonus)</label>
+</div>
+
                         <div class="sm:col-span-2 pt-1">
                             <button onclick="saveTeamData()" class="w-full bg-emerald-700 hover:bg-emerald-600 text-white font-bold py-2.5 px-4 rounded-md transition text-xs uppercase tracking-wider shadow">
                                 Spara ändringar lokalt
@@ -559,6 +563,7 @@
             pts += (s.w_sf || 0) * 10;
             pts += (s.w_f || 0) * 15;
             pts += (s.ambassador || 0); 
+            pts += (s.mvpBonus ? 10 : 0); // 🏆 NY RAD: Lägger till 10p om flaggan är sann
             return pts;
         }
 
@@ -579,6 +584,7 @@
                     name: a.name,
                     team: a.team,
                     ambassador: s.ambassador || 0,
+                    mvpBonus: s.mvpBonus || false, // 🏆 NY RAD
                     totalPoints: calculatePoints(s)
                 };
             });
@@ -591,11 +597,12 @@
                 else if (index === 1) medal = "🥈";
                 else if (index === 2) medal = "🥉";
 
-                tbody.innerHTML += `
-                    <tr class="border-b border-slate-800/40 hover:bg-slate-800/30 transition">
-                        <td class="py-3 px-3 text-center font-bold text-slate-400">${medal}</td>
-                        <td class="py-3 px-3 font-semibold text-white">${row.name}</td>
-                        <td class="py-3 px-3 text-slate-300 font-mono text-xs">${row.team}</td>
+                let mvpBadge = row.mvpBonus ? '<span class="text-tcGold text-[10px] font-bold bg-amber-500/10 px-1.5 py-0.5 rounded ml-2 border border-amber-500/20">🏆 MVP</span>' : '';
+        tbody.innerHTML += `
+            <tr class="border-b border-slate-800/40 hover:bg-slate-800/30 transition">
+                <td class="py-3 px-3 text-center font-bold text-slate-400">${medal}</td>
+                <td class="py-3 px-3 font-semibold text-white">${row.name}${mvpBadge}</td>
+                <td class="py-3 px-3 text-slate-300 font-mono text-xs">${row.team}</td>
                         <td class="py-3 px-3 text-center bg-purple-950/10 text-purple-300 font-bold border-x border-slate-800/20">${row.ambassador}p</td>
                         <td class="py-3 px-3 text-center text-tcGold font-extrabold text-base">${row.totalPoints}p</td>
                         <td class="py-3 px-3 text-center">
@@ -639,6 +646,7 @@
             document.getElementById("inp-w-sf").value = s.w_sf || 0;
             document.getElementById("inp-w-f").value = s.w_f || 0;
             document.getElementById("inp-ambassador").value = s.ambassador || 0;
+            document.getElementById("inp-mvp").checked = s.mvpBonus || false;
         }
 
         function saveTeamData() {
@@ -647,17 +655,26 @@
 
             let ambVal = parseInt(document.getElementById("inp-ambassador").value) || 0;
 
-            appState.stats[team] = {
-                goals: Math.max(0, parseInt(document.getElementById("inp-goals").value) || 0),
-                cleansheets: Math.max(0, parseInt(document.getElementById("inp-cleansheets").value) || 0),
-                draws: Math.max(0, parseInt(document.getElementById("inp-draws").value) || 0),
-                w_group: Math.max(0, parseInt(document.getElementById("inp-w-group").value) || 0),
-                w_r16: Math.max(0, Math.min(1, parseInt(document.getElementById("inp-w-r16").value) || 0)),
-                w_r8: Math.max(0, Math.min(1, parseInt(document.getElementById("inp-w-r8").value) || 0)),
-                w_qf: Math.max(0, Math.min(1, parseInt(document.getElementById("inp-w-qf").value) || 0)),
-                w_sf: Math.max(0, Math.min(1, parseInt(document.getElementById("inp-w-sf").value) || 0)),
-                w_f: Math.max(0, Math.min(1, parseInt(document.getElementById("inp-w-f").value) || 0)),
-                ambassador: Math.max(0, Math.min(5, ambVal))
+            // Om denna box kryssas i, nollställ MVP-bonusen för alla andra lag först
+if (document.getElementById("inp-mvp").checked) {
+    DEFAULT_TEAMS.forEach(t => {
+        if (appState.stats[t]) appState.stats[t].mvpBonus = false;
+    });
+}
+
+appState.stats[team] = {
+    goals: Math.max(0, parseInt(document.getElementById("inp-goals").value) || 0),
+    cleansheets: Math.max(0, parseInt(document.getElementById("inp-cleansheets").value) || 0),
+    draws: Math.max(0, parseInt(document.getElementById("inp-draws").value) || 0),
+    w_group: Math.max(0, parseInt(document.getElementById("inp-w-group").value) || 0),
+    w_r16: Math.max(0, Math.min(1, parseInt(document.getElementById("inp-w-r16").value) || 0)),
+    w_r8: Math.max(0, Math.min(1, parseInt(document.getElementById("inp-w-r8").value) || 0)),
+    w_qf: Math.max(0, Math.min(1, parseInt(document.getElementById("inp-w-qf").value) || 0)),
+    w_sf: Math.max(0, Math.min(1, parseInt(document.getElementById("inp-w-sf").value) || 0)),
+    w_f: Math.max(0, Math.min(1, parseInt(document.getElementById("inp-w-f").value) || 0)),
+    ambassador: Math.max(0, Math.min(5, ambVal)),
+    mvpBonus: document.getElementById("inp-mvp").checked // 🏆 NY RAD
+};
             };
 
             saveToLocalStorage();
