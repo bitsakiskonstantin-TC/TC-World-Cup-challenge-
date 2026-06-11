@@ -504,6 +504,27 @@ function prepareLiveDraw() {
             updateRemainingTeamsDisplay();
         }
 
+        function updateRemainingTeamsDisplay() {
+            const container = document.getElementById("remaining-teams-container");
+            container.innerHTML = "";
+            
+            let remaining = livePool.slice(liveIndex).map(p => p.team);
+            remaining.sort(); 
+            
+            if (remaining.length === 0) {
+                container.innerHTML = "<div class='text-slate-500 italic text-[11px] text-center py-2 col-span-full'>Tomt! Alla lag dragna.</div>";
+                return;
+            }
+            
+            remaining.forEach(team => {
+                container.innerHTML += `
+                    <div class="bg-slate-950 px-2 py-1 rounded border border-slate-800 text-[11px] text-slate-300 font-mono text-center">
+                        🏳️ ${team}
+                    </div>
+                `;
+            });
+        }
+        
         function drawNextStep() {
             let remaining = livePool.length - liveIndex;
 
