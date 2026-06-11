@@ -340,7 +340,26 @@
             stats: {},
             logo: ""       
         };
-
+function getNickname(name, team) {
+            const nicknames = {
+                "Spanien": `Don ${name} El Matador`,
+                "Frankrike": `Le ${name} baguette`,
+                "England": `Sir ${name} Fish'n'Chips`,
+                "Portugal": `Señor ${name} Piri-Piri`,
+                "Brasilien": `${name}inho du Samba`,
+                "Argentina": `El ${name} de la Pampa`,
+                "Tyskland": `Herr ${name} Bratwurst`,
+                "Nederländerna": `Van ${name} Stroopwafel`,
+                "Norge": `Thor ${name} Brunost`,
+                "Belgien": `Prins ${name} Pralin`,
+                "Colombia": `Don ${name} Espresso`,
+                "Japan": `Shogun ${name} Sushi`,
+                "Marocko": `Sultan ${name} Tajine`,
+                "USA": `Captain ${name} Burger`,
+                "Uruguay": `Gaucho ${name} Mate`
+            };
+            return nicknames[team] || name;
+        }
         let livePool = [];
         let liveIndex = 0;
 
@@ -456,7 +475,10 @@
                 [shuffledTeams[i], shuffledTeams[j]] = [shuffledTeams[j], shuffledTeams[i]];
             }
 
-            livePool = shuffledNames.map((name, idx) => ({ name: name, team: shuffledTeams[idx] }));
+           livePool = shuffledNames.map((name, idx) => {
+                const team = shuffledTeams[idx];
+                return { name: name, team: team, nickname: getNickname(name, team) };
+            });
             liveIndex = 0;
 
             appState.assignments = [];
@@ -557,11 +579,13 @@
             const content = document.getElementById("latest-draw-content");
             content.classList.remove("hidden");
             
-            document.getElementById("latest-draw-name").innerText = pair.name;
-            document.getElementById("latest-draw-team").innerText = pair.team.toUpperCase();
+            document.getElementById("latest-draw-name").innerHTML = `
+    <div class="mb-1"><span class="text-emerald-400">${pair1.name}</span> <span class="text-xs text-slate-400 italic">"${pair1.nickname}"</span></div>
+    <div><span class="text-cyan-400">${pair2.name}</span> <span class="text-xs text-slate-400 italic">"${pair2.nickname}"</span></div>
+`;
 
             const history = document.getElementById("drawn-history-list");
-            history.innerHTML = `<li class="py-1 text-slate-300 border-b border-slate-800/30"><span class="font-semibold text-white">${pair.name}</span> fick <span class="text-tcGold font-bold">${pair.team}</span></li>` + history.innerHTML;
+            history.innerHTML = `<li class="py-1 text-slate-300 border-b border-slate-800/30"><span class="font-semibold text-white">${pair.name}</span> <span class="text-slate-400 text-xs italic">("${pair.nickname}")</span> fick <span class="text-tcGold font-bold">${pair.team}</span></li>` + history.innerHTML;
         }
 
         function calculatePoints(s) {
@@ -595,6 +619,7 @@
                 const s = appState.stats[a.team] || { goals: 0, cleansheets: 0, draws: 0, w_group: 0, w_r16: 0, w_r8: 0, w_qf: 0, w_sf: 0, w_f: 0, ambassador: 0 };
                 return {
                     name: a.name,
+                    nickname: a.nickname || "", // HÄR: Hämtar smeknamnet från datan
                     team: a.team,
                     ambassador: s.ambassador || 0,
                     mvpBonus: s.mvpBonus || false,
@@ -614,7 +639,12 @@
                 tbody.innerHTML += `
                     <tr class="border-b border-slate-800/40 hover:bg-slate-800/30 transition">
                         <td class="py-3 px-3 text-center font-bold text-slate-400">${medal}</td>
-                        <td class="py-3 px-3 font-semibold text-white">${row.name}${mvpBadge}</td>
+                       <td class="py-3 px-3 text-white">
+    <div class="flex flex-col">
+        <span class="font-semibold">${row.name}${mvpBadge}</span>
+        <span class="text-xs text-slate-400 italic font-normal mt-0.5">"${row.nickname}"</span>
+    </div>
+</td>
                         <td class="py-3 px-3 text-slate-300 font-mono text-xs">${row.team}</td>
                         <td class="py-3 px-3 text-center bg-purple-950/10 text-purple-300 font-bold border-x border-slate-800/20">${row.ambassador}p</td>
                         <td class="py-3 px-3 text-center text-tcGold font-extrabold text-base">${row.totalPoints}p</td>
