@@ -456,7 +456,7 @@ function getNickname(name, team) {
             });
         }
 
-        function prepareLiveDraw() {
+function prepareLiveDraw() {
             if (appState.hasDrawn) {
                 if (!confirm("Det finns redan en sparad dragning. Vill du nollställa och köra om en helt ny lottning?")) {
                     return;
@@ -475,7 +475,7 @@ function getNickname(name, team) {
                 [shuffledTeams[i], shuffledTeams[j]] = [shuffledTeams[j], shuffledTeams[i]];
             }
 
-           livePool = shuffledNames.map((name, idx) => {
+            livePool = shuffledNames.map((name, idx) => {
                 const team = shuffledTeams[idx];
                 return { name: name, team: team, nickname: getNickname(name, team) };
             });
@@ -497,33 +497,11 @@ function getNickname(name, team) {
             document.getElementById("draw-counter").innerText = "15";
             document.getElementById("latest-draw-placeholder").classList.remove("hidden");
             document.getElementById("latest-draw-content").classList.add("hidden");
-            document.getElementById("drawn-history-list").innerHTML = "";
             document.getElementById("draw-next-btn").innerText = "Dra nästa par! 🔀";
             document.getElementById("draw-next-btn").style.display = "inline-block";
             document.getElementById("draw-next-btn").disabled = false;
             
             updateRemainingTeamsDisplay();
-        }
-
-        function updateRemainingTeamsDisplay() {
-            const container = document.getElementById("remaining-teams-container");
-            container.innerHTML = "";
-            
-            let remaining = livePool.slice(liveIndex).map(p => p.team);
-            remaining.sort(); 
-            
-            if (remaining.length === 0) {
-                container.innerHTML = "<div class='text-slate-500 italic text-[11px] text-center py-2 col-span-full'>Tomt! Alla lag dragna.</div>";
-                return;
-            }
-            
-            remaining.forEach(team => {
-                container.innerHTML += `
-                    <div class="bg-slate-950 px-2 py-1 rounded border border-slate-800 text-[11px] text-slate-300 font-mono text-center">
-                        🏳️ ${team}
-                    </div>
-                `;
-            });
         }
 
         function drawNextStep() {
@@ -554,7 +532,10 @@ function getNickname(name, team) {
                 const content = document.getElementById("latest-draw-content");
                 content.classList.remove("hidden");
                 
-                document.getElementById("latest-draw-name").innerHTML = `<span class="text-emerald-400">${pair1.name}</span> & <span class="text-cyan-400">${pair2.name}</span>`;
+                document.getElementById("latest-draw-name").innerHTML = `
+                    <div class="mb-1"><span class="text-emerald-400">${pair1.name}</span> <span class="text-xs text-slate-400 italic">"${pair1.nickname}"</span></div>
+                    <div><span class="text-cyan-400">${pair2.name}</span> <span class="text-xs text-slate-400 italic">"${pair2.nickname}"</span></div>
+                `;
                 document.getElementById("latest-draw-team").innerHTML = `<span class="text-tcGold text-xl block">${pair1.team}</span><span class="text-tcGold text-xl block mt-0.5">${pair2.team}</span>`;
                 
                 const history = document.getElementById("drawn-history-list");
@@ -579,10 +560,8 @@ function getNickname(name, team) {
             const content = document.getElementById("latest-draw-content");
             content.classList.remove("hidden");
             
-            document.getElementById("latest-draw-name").innerHTML = `
-    <div class="mb-1"><span class="text-emerald-400">${pair1.name}</span> <span class="text-xs text-slate-400 italic">"${pair1.nickname}"</span></div>
-    <div><span class="text-cyan-400">${pair2.name}</span> <span class="text-xs text-slate-400 italic">"${pair2.nickname}"</span></div>
-`;
+            document.getElementById("latest-draw-name").innerHTML = `${pair.name} <span class="text-slate-400 text-sm block italic mt-1">"${pair.nickname}"</span>`;
+            document.getElementById("latest-draw-team").innerText = pair.team.toUpperCase();
 
             const history = document.getElementById("drawn-history-list");
             history.innerHTML = `<li class="py-1 text-slate-300 border-b border-slate-800/30"><span class="font-semibold text-white">${pair.name}</span> <span class="text-slate-400 text-xs italic">("${pair.nickname}")</span> fick <span class="text-tcGold font-bold">${pair.team}</span></li>` + history.innerHTML;
